@@ -2,6 +2,8 @@
 
 This workflow is designed to automate the process of staying updated with the fast-paced world of Artificial Intelligence. Instead of manually checking multiple sources, this agent does the heavy lifting for you.
 
+<img src="n8n_workflow_screenshot.png" width="800">
+
 ## 🎯 Purpose
 To fetch the latest AI-related news, summarize them using advanced LLMs, and deliver a concise digest that saves time and keeps you informed.
 
