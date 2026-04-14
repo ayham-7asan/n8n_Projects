@@ -15,7 +15,6 @@ Welcome to my automation portfolio! This repository contains professional workfl
 ---
 ## 📩 Contact Me
 
-- **Instagram:** [ayham.auto](https://www.instagram.com/ayham.auto)
-- **LinkedIn:** [Ayham Hasan](https://www.linkedin.com/in/ayham-hasan-b84b312b6)
-- **Email:** [Ayham Hasan](hasan.ayham@outlook.com)
-
+* **Instagram:** [ayham.auto](https://www.instagram.com/ayham.auto)
+* **LinkedIn:** [Ayham Hasan](https://www.linkedin.com/in/ayham-hasan-b84b312b6)
+* **Email:** [hasan.ayham@outlook.com](mailto:hasan.ayham@outlook.com)
