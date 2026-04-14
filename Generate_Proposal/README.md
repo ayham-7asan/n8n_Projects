@@ -2,6 +2,8 @@
 
 Creating business proposals can be time-consuming. This automation agent is designed to generate professional, tailored proposals in seconds by leveraging AI and structured data.
 
+![Proposal Workflow](proposal_flow.png)
+
 ## 🎯 Purpose
 To automate the drafting of business proposals, ensuring consistency, professional language, and significant time savings for sales and service providers.
 
