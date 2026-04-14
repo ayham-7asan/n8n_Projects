@@ -1,0 +1,378 @@
+{
+  "name": "Project #2",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "replaceText",
+        "presentationId": "={{ $json.id }}",
+        "textUi": {
+          "textValues": [
+            {
+              "pageObjectIds": [
+                "gcb9a0b074_1_0"
+              ],
+              "text": "{{ProposalTittle}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ProposalTittle }}"
+            },
+            {
+              "pageObjectIds": [
+                "gcb9a0b074_1_0"
+              ],
+              "text": "{{DescriptionName}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.DescriptionName }}"
+            },
+            {
+              "pageObjectIds": [
+                "gd5b15f0a3_5_26"
+              ],
+              "text": "{{ProblemOne}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ProblemOne }}"
+            },
+            {
+              "pageObjectIds": [
+                "gd5b15f0a3_5_26"
+              ],
+              "text": "{{ProblemTwo}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ProblemTwo }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_3_0"
+              ],
+              "text": "{{SolutionOne}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.SolutionOne }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_3_0"
+              ],
+              "text": "{{SolutionOneDescription}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.SolutionOneDescription }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_3_0"
+              ],
+              "text": "{{SolutionTwo}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.SolutionTwo }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_3_0"
+              ],
+              "text": "{{SolutionTwoDescription}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.SolutionTwoDescription }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_3_0"
+              ],
+              "text": "{{SolutionThree}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.SolutionThree }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_3_0"
+              ],
+              "text": "{{SolutionThreeDescription}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.SolutionThreeDescription }}"
+            },
+            {
+              "pageObjectIds": [
+                "gcb9a0b074_1_103"
+              ],
+              "text": "{{ScopeOne}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ScopeOne }}"
+            },
+            {
+              "pageObjectIds": [
+                "gcb9a0b074_1_103"
+              ],
+              "text": "{{ScopeOneDescription}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ScopeOneDescription }}"
+            },
+            {
+              "pageObjectIds": [
+                "gcb9a0b074_1_103"
+              ],
+              "text": "{{ScopeTwo}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ScopeTwo }}"
+            },
+            {
+              "pageObjectIds": [
+                "gcb9a0b074_1_103"
+              ],
+              "text": "{{ScopeTwoDescription}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ScopeTwoDescription }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_10_0"
+              ],
+              "text": "{{MeetMe}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.MeetMe }}"
+            },
+            {
+              "pageObjectIds": [
+                "g723630543_10_0"
+              ],
+              "text": "{{AboutMe}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.AboutMe }}"
+            },
+            {
+              "pageObjectIds": [
+                "gd5b15f0a3_5_26"
+              ],
+              "text": "{{ProblemThree}}",
+              "replaceText": "={{ $('Message a model').item.json.output[0].content[0].text.ProblemThree }}"
+            }
+          ]
+        },
+        "options": {
+          "revisionId": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSlides",
+      "typeVersion": 2,
+      "position": [
+        800,
+        192
+      ],
+      "id": "fabd99f0-8d91-467d-8edb-512f9b0090fd",
+      "name": "Replace text in a presentation",
+      "credentials": {
+        "googleSlidesOAuth2Api": {
+          "id": "rMH7U4yfvPcxv4eR",
+          "name": "Google Slides account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Your task is to generate a proposal using input data from a form. This proposal should be highly customized, specific, and high-quality,\nconsidering we're going to be sending it immediately after you're done.\nThe proposal template we're using has many fields. \n\nYou must return these fields in one JSON object.\n\nUse this format:\n\n{\n  \"ProposalTittle\": \"\",\n  \"DescriptionName\": \"\",\n  \"ProblemOne\": \"\",\n  \"ProblemTwo\": \"\",\n  \"ProblemThree\": \"\",\n  \" SolutionOne\": \"\",\n  \"SolutionOneDescription\": \"\",\n  \"SolutionTwo\": \"\",\n  \"SolutionTwoDescription\": \"\",\n  \"SlutionThree\": \"\",\n  \"SolutionThreeDescription\": \"\",\n  \"ScopeOne\": \"\",\n  \"ScopeOneDescription\": \"\",\n  \"ScopeTwo\": \"\",\n  \"ScopeTwoDescription\": \"\",\n  \"MeetMe\": \"\",\n  \"AboutMe\": \"\"\n}\n\nRules:\n1. Use a spartan, casual tone of voice.\n2. Be to-the-point but professional\n-assume you're writing to a sophisticated audience.\n3. Ensure that all fields are filled out, Do not miss any field, or leave any variable empty.\n\nBy using this Data first and merge it \nwith the example in down:\n- Problem: {{ $json.Problem }}\n- Solution: {{ $json.Solution }}\n- Scope: {{ $json.Scope }}\n\nExample:\n{  \n\"ProposalTittle\": \"Automation Business\",\n  \n\"DescriptionName\": \"System automation helps eliminate the burden of repetitive processes, in addition to higher productivity and fewer errors. Join us...\",\n  \n\"ProblemOne\": \"Manual Data Entry\",\n\n\"ProblemTwo\": \"Slow customer Support Responses\",\n\n\"ProblemThree\": \"Missed Follow-ups with Leeds\",\n  \n\"SolutionOne\": \"Lost Leads Due to Slow Customer Responses\",\n  \n\"SolutionOneDescription\": \"Many businesses receive daily inquiries through WhatsApp, Instagram, and email but fail to respond quickly or consistently. Messages are often handled manually, which leads to delayed replies, missed follow-ups, and lost potential customers. Without a structured system to classify and prioritize inquiries, valuable leads slip through the cracks and revenue opportunities are lost.\",\n  \n\"SolutionTwo\": \"Time-Consuming Manual Invoice & Document Data Entry\",\n\n\"SolutionTwoDescription\": \"Companies frequently process invoices, receipts, and business documents manually. Employees must open each file, extract important information, and enter it into spreadsheets or accounting systems. This repetitive process consumes valuable time, increases operational costs, and introduces human errors that can impact financial accuracy\",\n  \n\"SolutionThree\": \"Lack of Structured Meeting Documentation and Task Tracking\",\n\n\"SolutionThreeDescription\": \"Teams conduct multiple meetings every week, but discussions and decisions are rarely documented properly. Important action items are forgotten, responsibilities become unclear, and productivity decreases. Without an automated system to summarize meetings and extract tasks, businesses struggle with accountability and execution.\",\n  \n\"ScopeOne\": \"Operational Process Automation\",\n\n\"ScopeOneDescription\": \"AI Automation can streamline repetitive and time-consuming business operations such as data entry, document processing, email classification, reporting, and workflow management. By integrating AI with automation tools, businesses can reduce manual workload, minimize human errors, and improve operational efficiency. This scope focuses on optimizing internal processes and saving time and costs.\",\n  \n\"ScopeTwo\": \"Customer Interaction & Revenue Automation\",\n  \n\"ScopeTwoDescription\": \"AI Automation can enhance customer communication and sales processes by handling inquiries, qualifying leads, personalizing responses, and automating follow-ups. It enables businesses to respond instantly, maintain consistent communication, and increase conversion rates. This scope focuses on improving customer experience while directly impacting revenue growth.\",\n  \n\"MeetMe\": \"Contact with me (Ayham Hasan)\",\n \n\"AboutMe\": \"AI automation specialist in data and pattern analysis\"\n}\n\nI need to:\n\n- Describe (DescriptionName) more detail.\n\n- Keep the solutions concise and ensure their description does not exceed one lines.\n\n- Keep the scopes concise and ensure their description does not exceed one lines.\n\n- Talk about me more detail as specialist AI Automation (Data Analysis, Extracting Data)."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        192
+      ],
+      "id": "4a39bf1d-b949-44ce-a613-25f5b53d30dd",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ie5i33uVBXvIGNMD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1F60Rx_xAwYB7NIgNJIF1Lde1Bi5MBUyCF93Igm6yWTs"
+        },
+        "name": "={{ $json.output[0].content[0].text.ProposalTittle }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        560,
+        192
+      ],
+      "id": "7dba48c8-f4bd-4911-8bad-f498e62abf8d",
+      "name": "Copy file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "pNaMDfbaFIdiRPkp",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Re: Proposal for your Company",
+        "emailType": "text",
+        "message": "=Hey {{ $('On form submission').item.json['Fisrt Name'] }} {{ $('On form submission').item.json['Last Name'] }}, \n\nThanks for the great call earlier. I had a moment after our chat to put together a detailed proposal for you-please take a look at your earliest convenience and let me know your thoughts. \n\nYou'll find it here: https://docs.google.com/presentation/d/{{ $json.presentationId }}/edit \n\nIf you have any questions, let me know. I've also sent over an invoice for the amount (just to keep things convenient) \n \nThanks, Ayham",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        192
+      ],
+      "id": "47df1ddc-d1b2-4c9c-9858-ae41afd645fa",
+      "name": "Send a message",
+      "webhookId": "2ecaf853-33c7-40be-a637-b423b05c3414",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZTXDBwaVklo4gcc2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Salles Call Logging Form",
+        "formDescription": "This form logs a sales call and automatically generates a proposal.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Fisrt Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "website",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Problem",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Solution",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Scope",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "e170abda-3403-4560-8ec0-0d931ff20e2d",
+      "name": "On form submission",
+      "webhookId": "5100c427-a6ca-43a6-8ebd-21301686a5ed"
+    },
+    {
+      "parameters": {
+        "content": "- Using this Workflow -->\n\nTo generate proposal based on google slides with data on form submission, then send a proposal on email.\n",
+        "height": 128,
+        "width": 368,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "90ed4166-06e4-40be-aea2-3fc9cf1ce036",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Replace text in a presentation": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Copy file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy file": {
+      "main": [
+        [
+          {
+            "node": "Replace text in a presentation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7f50c6b9-7668-4e17-807e-633647e46458",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c8c2115dbbae9aedc860e04e68fb7481452bfdb82b6196f5090d09df89d106bb"
+  },
+  "id": "7UUCozsEQUT6vlem",
+  "tags": [
+    {
+      "updatedAt": "2026-04-13T23:49:39.880Z",
+      "createdAt": "2026-04-13T23:49:39.880Z",
+      "id": "jke3lamhbPgOmqjL",
+      "name": "Generate a Proposal"
+    }
+  ]
+}
