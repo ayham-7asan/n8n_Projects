@@ -13,9 +13,8 @@ Welcome to my automation portfolio! This repository contains professional workfl
 - **Tools:** n8n, AI Agents, Google Docs Integration.
 
 ---
-**Contact Me:** 
+## 📩 Contact Me
 
-[Instagram]: (https://www.instagram.com/ayham.auto)  
-
-[LinkedIn]: (https://www.linkedin.com/in/ayham-hasan-b84b312b6?utm_source=share_via&utm_content=profile&utm_medium=member_ios)
+- **Instagram:** [ayham.auto](https://www.instagram.com/ayham.auto)
+- **LinkedIn:** [Ayham Hasan](https://www.linkedin.com/in/ayham-hasan-b84b312b6)
 
