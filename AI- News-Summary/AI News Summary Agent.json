@@ -1,0 +1,246 @@
+{
+  "name": "AI News Summary Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        432
+      ],
+      "id": "e8c0ef3c-1dd4-4116-8bfb-0c6603ec7962",
+      "name": "Get Tech News"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Reads the news",
+        "url": "=https://feeds.bbci.co.uk/news/world/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        432
+      ],
+      "id": "a7106974-9c51-4db2-8654-d965bd2c79d8",
+      "name": "Get World News"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        432
+      ],
+      "id": "2bb8e12f-4bb7-4a90-831e-325508f8c23a",
+      "name": "OpenAI Model",
+      "notesInFlow": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "ie5i33uVBXvIGNMD",
+          "name": "OpenAi account"
+        }
+      },
+      "notes": "Free n8n credits "
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Provide a summary of world and tech news from the last 24 hours. \n\n- Use the headings \"World News\" and \"Tech News.\" \n- Exclude comments, insights, and any news that is considered sad or distressing. \n- Include up to 10 concise bullet points, prioritizing major events and developments. \n- Focus on key developments from credible sources.\n- Consider today to be {{ $today }}. \n- Leave a line between each news item.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        176
+      ],
+      "id": "7416158c-ed62-42c2-996e-fd0012e8ee80",
+      "name": "AI Summary Agent",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "content": "- Using this Workflow --> \n\n To generate the news at last 24 hours (World and Technology) by using AI Agent Summary, then send the news by email",
+        "height": 112,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "38c8c285-0aec-4bde-8e5a-12846416a811",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "yourEmail@example.com",
+        "subject": "Your news daily summary",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        176
+      ],
+      "id": "6f11db45-5122-4699-9bd4-4146f5d0964b",
+      "name": "Send summary with Gmail",
+      "webhookId": "e0c46fef-51f3-4a8d-8aaf-b6e17ea89346",
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZTXDBwaVklo4gcc2",
+          "name": "Gmail account"
+        }
+      },
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85b5c530-2c13-4424-ab83-05979bc879a5",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        176
+      ],
+      "id": "c6f5cbba-4669-4214-b430-1638b391b936",
+      "name": "Output (News summary)",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "151e4201-213c-4af4-b65d-5fdeee00fdda",
+      "name": "Workflow trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Tech News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get World News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summary Agent": {
+      "main": [
+        [
+          {
+            "node": "Output (News summary)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output (News summary)": {
+      "main": [
+        [
+          {
+            "node": "Send summary with Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "301ed3e7-08e6-4fca-a181-7442f628a115",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c8c2115dbbae9aedc860e04e68fb7481452bfdb82b6196f5090d09df89d106bb"
+  },
+  "id": "vsSJexluRsbQoGFy",
+  "tags": [
+    {
+      "name": "AI Agent news Summary",
+      "id": "O0SPyetZI7gc998n",
+      "updatedAt": "2026-04-13T23:48:57.816Z",
+      "createdAt": "2026-04-13T23:48:57.816Z"
+    }
+  ]
+}
