@@ -4,7 +4,7 @@ Welcome to my automation portfolio! This repository contains professional workfl
 
 ## 📂 Projects Overview
 
-### 1. [AI News Summary](https://github.com/ayham-7asan/n8n_Projects/tree/main/AI-%20News-Summary)
+### 1. [AI News Summary](https://github.com/ayham-7asan/n8n_Projects/tree/main/Summary_News)
 - **Goal:** Automatically fetch, summarize, and deliver daily AI news.
 - **Tools:** n8n, OpenAI (GPT-4), RSS Feeds.
 
