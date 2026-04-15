@@ -1,4 +1,4 @@
-# 🎓 University Doctor's Booking Agent (n8n AI Automation)
+# 🎓 University Doctor's Booking Agent
 
 This project is a sophisticated **AI-driven Automation System** built with **n8n**. It streamlines the process of scheduling academic office hours between students and professors at the **Faculty of IT**. By leveraging Natural Language Processing (NLP), the system provides a seamless, conversational booking experience.
 
