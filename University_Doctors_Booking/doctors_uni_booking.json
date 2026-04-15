@@ -1,0 +1,571 @@
+{
+  "name": "Doctors_Uni_Booking",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "===============================\nROLE & CONTEXT\n==============================\nYou are the \"Academic Office Hours Assistant\" for ASU. \nYour goal is to help students book meetings with Doctors and output the final data in a valid JSON format using collected variables.\n\nCurrent Date & Time:\n{{$now.setZone('Asia/Amman').toFormat('EEEE, d MMMM yyyy, HH:mm')}}\nTimezone: Amman (GMT+3)\n\n==============================\nCORE RULES\n==============================\n- Current Date & Time: Always use the current date and time provided by the system as the reference point for \"Today\".\n\n- Timezone: All bookings must follow Jordan Time (Asia/Amman - GMT+3).\n\n- Validity: Never suggest or book slots in the past or in previous years (e.g., 2023). Only offer future slots starting from today {{$now.setZone('Asia/Amman').toFormat('EEEE, d MMMM yyyy, HH:mm')}}.\n\n- Response for Late Requests: If a student tries to book for \"Today\" but the hours have finished, say: \"I'm sorry, but Doctor {{drName}}'s office hours for today have already ended. 🕒 Let's look for a slot on a different day instead! 😊\n\n- The \"5-Minute\" Rule: Even if it is only 1 minute past the end time (e.g., current time is 12:01 and office hours ended at 12:00), you MUST NOT process the booking for today.\n\n- Initial Action: When a student says hello or starts a conversation, your ONLY task is to greet them and ask which doctor they would like to meet with.\n\n\n- STRICT RULE:\n\n* DO NOT suggest any specific doctor names in your initial greeting.\n\n* Case Insensitivity: Ignore capitalization. (e.g., \"ayham\", \"Ayham\", and \"AYHAM\" must be treated the same).\n\n* Fuzzy Matching: If a student makes a small typo (e.g., \"Aiham\" instead of \"Ayham\") or uses a different spelling, DO NOT reject it. Use the find_doctor tool to find the closest match from the sheet.\n\n- Name Processing:\n\n* If the user provides a full name or a name that closely matches a doctor in your sheet, consider it a CONFIRMED match.\n\n* IMMEDIATELY use the tool to fetch available slots for that doctor without asking for confirmation.\n\n* Only ask for clarification if the input is a single name (e.g., just \"Ayham\") or if there are multiple DIFFERENT doctors with the same last name.\n\n- Action:\n* Once a match is found via the tool, display the office hours immediately.\n\n* Skip any \"Did you mean...?\" questions if the Fuzzy Match score is high.\n==============================\nDATA COLLECTION PROTOCOL\n==============================\n- Find Doctor: Get the Doctor's email from Sheet1 and available slots from Sheet2 and take care about update the data on sheets.\n\n- Show to the students Office Hours for doctors from excel      sheet 2\n\n- Calculate the meeting end time:\n  Calculate endTime by adding the student's preferred           duration to the startTime.\n  (Example: if \"startTime\" is 10:00 AM and duration is 15       minutes, \"endTime\" is 10:15 AM).\n\n- Collect Student Data: You MUST collect: Full Name, University ID, Email, visitReason Major, the specific Date of the meeting.\n\n- Date Handling: If the student says \"next Sunday\" or a relative day, calculate the exact date based on today's date ({{$now.format('cccc, dd MMMM yyyy')}}). Always confirm the full date (Day, Month, Year) with the student before proceeding.\n\n- Mandatory Stop: If Student Email is missing, you MUST ask: \"Please provide your email to complete the booking.\"\n\n- If a time conflict is found in the Google Calendar, DO NOT ask for the student's personal details (Name, ID, etc.) again. Only ask for a NEW DATE or NEW TIME to resolve the conflict.\n\n==============================\nDATE VALIDATION RULE\n==============================\n- When a student provides a date and time, you MUST use the Google Calendar Search tool to check for availability on that specific day.\n\n- If the date is in the past, or if it's a weekend (Friday/Saturday in Jordan), or if there's a conflict, you must inform the student and ask for another date.\n\n- Important: Always calculate the date relative to Today's Date: {{$now.format('cccc, dd MMMM yyyy')}}.\n\n==============================\nOPERATIONAL FLOW (Step by Step)\n==============================\n* Greeting: Start by asking which doctor they want to book with: \n  -If the first name only provided ask: \"Could you please        provide the full name of the Doctor to ensure we select       the correct profile?\"\n\n* Display Office hours for the chosen Doctor from (sheet 2)\nTool.\n\n* Ask for \"duration\" and collect all 7 student details.\n\n* Ask for Final Confirmation: \"Do you want to proceed with this booking?\"\n\n* CRITICAL ACTION (MANDATORY): Once the student says \"Yes\" or confirms:\n   - FIRST: You MUST call the \"Google Calendar\" tool to search for conflicts.\n   - SECOND: If the slot is BUSY or there is a CONFLICT, stop and inform the student immediately.\n   - THIRD: ONLY if the slot is FREE, proceed to call the \"Gmail\" tool to send the approval email using the \n{{ drEmail }} variable as the reciever's address.\n\n* FINAL RESPONSE: Only after the tools (Calendar & Gmail) are successfully executed, your response should be:\n\"Your booking request for Dr. {{drName}} has been successfully sent! 📧...\"\n\n* JSON OUTPUT: After the text above, provide the mandatory JSON.\n\n* NO JSON IN CHAT: (CRITICAL) NEVER show the JSON code or the word \"Summary\" to the student. The JSON is for INTERNAL system use only.\n==============================\nJSON OUTPUT (MANDATORY For System Only)\n==============================\n1. DO NOT show a summary of the collected data to the student.\n\n2. DO NOT use the word \"Summary\" or show the JSON code in the \nchat.\n\n3.Final JSON Output (MANDATORY):\nOnce the student confirms, you must output a single JSON block at the end of your message. Use the exact variables you have collected in your memory to fill the values:\nJSON\n\n{\n  \"studentName\": \"{{studentName}}\",\n  \"studentId\": \"{{studentId}}\",\n  \"studentEmail\": \"{{studentEmail}}\",\n  \"studentMajor\": \"{{studentMajor}}\",\n  \"drEmail\": \"{{drEmail}}\",\n  \"drName\": \"{{drName}}\",\n  \"appointmentDay\": \"{{appointmentDay}}\",\n  \"startTime\": \"{{startTime}}\",\n  \"endTime\": \"{{endTime}}\",\n  \"visitReason\": \"{{visitReason}}\",\n  \"duration\": \"{{duration}}\",\n  \"date\": \"{{date}}\"\n}\n\n==============================\nIMPORTANT INSTRUCTIONS\n==============================\n* Talk with students only in Arabic And english languages.\n\n* Replace the {{variableName}} with the ACTUAL information provided by the user or fetched from sheets. Do NOT output the JSON until all variables have real values (No nulls, no \"value\").\n\n* Use the title \"Doctor\" in all your responses.\n\n* After choose a doctor provide an office hours for him befor   ask students about Name, ID and Major etc...\n\n* At the final tell the user thank you.\n\n* Use the emojis when you are talking with student.\n\n* Don't be too serious in your conversation.\n\n* Do not suggest a specific professor unless the student specifically asks for your help in suggesting one.\n\n==============================\nBOOKING PIPELINE PROTOCOL\n==============================\n1) Data Retrieval: First, use the Google Sheets tool to fetch the professor's information and office hour details.\n\n2) Calendar Check: Use the Google Calendar tool to verify if the requested time slot is vacant and matches the professor's schedule.\n\n3) Confirmation Action: ONLY after confirming the slot is available and completing the booking in the Calendar, use the Gmail tool to send a formal confirmation email to the professor.\n\n4) Notification: Once the email is sent, inform the student that the booking was successful and the professor has been notified.\n\n5) Constraint: Do NOT send any emails if the Calendar slot is already booked or if there is a scheduling conflict.\n\n6) Format: in the ending message do NOT provide the json structure of the confirmation details, just a message generated nothing more"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7aa676f7-a19e-42c1-9f7b-e21475721191",
+      "name": "AI Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        240
+      ],
+      "id": "b1e3ebc5-e7df-4612-80db-1965334127aa",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ie5i33uVBXvIGNMD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "student_session_1",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        240
+      ],
+      "id": "106841be-471b-4fb3-a190-720d27918b03",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name ASU Chatbot. How can I assist you today?",
+        "availableInChat": true,
+        "agentName": "ASU Academic Assistant",
+        "agentDescription": "Your AI assistant for academic inquiries and office hours booking at the Faculty of IT.",
+        "suggestedPrompts": {
+          "prompts": []
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        160,
+        0
+      ],
+      "id": "7adfce33-5c69-4ca9-8253-01b16e40315a",
+      "name": "When chat message received",
+      "webhookId": "b9897bcc-0f2c-459b-a8b6-3e3cedaf8054"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to find available slots for a specific professor.",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACED_WITH_YOUR_SHEET_ID",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet2",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        240
+      ],
+      "id": "4b484e0f-effc-4928-9d3f-f837b6fdfddf",
+      "name": "Sheet 2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4vNtbuMxMkfwi4uO",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to find professor names and their specialties.",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACED_WITH_YOUR_SHEET_ID",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        240
+      ],
+      "id": "49e6f7e0-168a-47e9-8b3c-6e98714076be",
+      "name": "Sheet 1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4vNtbuMxMkfwi4uO",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $fromAI(\"drEmail\") }}",
+          "mode": "id"
+        },
+        "limit": 10,
+        "timeMin": "={{ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        240
+      ],
+      "id": "c6ec2f3e-21d0-48aa-8027-ce27675e23e4",
+      "name": "Check the Meeting",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "V8TzkVuqiAkZVrAe",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "meeting-response",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        608
+      ],
+      "id": "ae92bd8a-7139-4796-acf2-228ab222f5e8",
+      "name": "Webhook",
+      "webhookId": "0d4b5dae-cbb9-468b-bac5-56ba9477b166"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e0169176-4fef-4c37-8454-007d1c7a4377",
+              "leftValue": "={{$json.query.action}}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        608
+      ],
+      "id": "7128db3a-0a6f-4689-b23e-8c60cf363138",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $json.query.drEmail }}",
+          "mode": "id"
+        },
+        "start": "={{ $json.query.date + 'T' + $json.query.start.padStart(5, '0') + ':00+03:00' }}",
+        "end": "={{ $json.query.date + 'T' + $json.query.end.padStart(5, '0') + ':00+03:00' }}",
+        "additionalFields": {
+          "summary": "=Meeting with {{ $json.query.stName }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        512
+      ],
+      "id": "4087142e-442a-4671-86c1-d32cb0253137",
+      "name": "Meeting Calender for Doctor",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "V8TzkVuqiAkZVrAe",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $('If').item.json.query.stEmail }}",
+          "mode": "id"
+        },
+        "start": "={{ $('Webhook').item.json.query.date + 'T' + $('Webhook').item.json.query.start.padStart(5, '0') + ':00+03:00' }}",
+        "end": "={{ $('Webhook').item.json.query.date + 'T' + $('Webhook').item.json.query.end.padStart(5, '0') + ':00+03:00' }}",
+        "additionalFields": {
+          "summary": "=Meeting with Dr. {{ $('If').item.json.query.drName }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        512
+      ],
+      "id": "258b3439-9f1a-4070-81f5-064e8ddc63ab",
+      "name": "Meeting Calender for Student",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "nD6mrFmAx3uvt0ZI",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.creator.email }}",
+        "subject": "=Cnfirmation: Your meeting with {{ $('If').item.json.query.drName }}",
+        "emailType": "text",
+        "message": "=Dear Student,\n\nWe are pleased to inform you that your request for a meeting with {{$('If').item.json.query.drName}} regarding {{$('If').item.json.query.reason}} has been successfully confirmed.\n\n-Meeting Details:\n\nDate: {{ $('If').item.json.query.date }}\n\nTime: {{ $('If').item.json.query.start }}\n\nDuration: 10 Minutes\n\nLocation: Doctor's Office\n\n-Important Notes:\n\nPlease ensure you arrive or join on time, as the schedule is strictly organized in 10-minute slots.\n\nIf you are unable to attend, please notify us in advance to allow other students to take the slot.\n\n\n\nBest regards,\n\nOffice Hours Booking System | ASU",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        512
+      ],
+      "id": "f85bc74e-6eb2-4c25-84b4-0f06832440ff",
+      "name": "Meeting Approved for Student",
+      "webhookId": "8e4c5677-d3c6-4d64-8124-0706c523eebb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZTXDBwaVklo4gcc2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.query.stEmail }}",
+        "subject": "Meeting Request",
+        "emailType": "text",
+        "message": "=Hello {{ $json.query.stName }},  \n\nWe regret to inform you that Dr. {{ $json.query.drName }} has declined your appointment request for {{ $('Webhook').item.json.query.date }} at {{ $json.query.start}}.  \n\nPlease log in to the system to request another available time slot.\n\n\nBest regards,\nOffice Hours Booking System | ASU",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        704
+      ],
+      "id": "99243506-f58b-42f8-bee1-6b739770bb6e",
+      "name": "Excues for Meeting Decline",
+      "webhookId": "bc97f2fa-b63d-4cec-8151-5177e7166205",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZTXDBwaVklo4gcc2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        body {\n            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\n            background-color: #f0f2f5;\n            margin: 0;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n        }\n        .card {\n            background: #ffffff;\n            padding: 50px;\n            border-radius: 12px;\n            box-shadow: 0 10px 25px rgba(0,0,0,0.05);\n            text-align: center;\n            max-width: 450px;\n            border-top: 6px solid #1a73e8; /* Professional Blue */\n        }\n        .icon-circle {\n            width: 80px;\n            height: 80px;\n            background: #e8f0fe;\n            color: #1a73e8;\n            border-radius: 50%;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            font-size: 40px;\n            margin: 0 auto 20px;\n        }\n        h1 {\n            color: #202124;\n            font-size: 24px;\n            margin-bottom: 10px;\n        }\n        p {\n            color: #5f6368;\n            font-size: 16px;\n            line-height: 1.5;\n            margin-bottom: 25px;\n        }\n        .footer {\n            font-size: 12px;\n            color: #9aa0a6;\n            margin-top: 30px;\n            padding-top: 20px;\n            border-top: 1px solid #f1f3f4;\n        }\n        .asu-tag {\n            font-weight: bold;\n            color: #1a73e8;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"card\">\n        <div class=\"icon-circle\">✓</div>\n        <h1>Request Approved</h1>\n        <p>The request has been successfully processed and confirmed. The student/recipient will be notified shortly via email.</p>\n        \n        <div class=\"footer\">\n            <span class=\"asu-tag\">Applied Science Private University</span><br>\n            Faculty of Information Technology<br>\n            AI Automation Systems ©️ 2026\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1088,
+        512
+      ],
+      "id": "4fe91d14-06c3-490e-8407-7a818a14de18",
+      "name": "Respond to Webhook (Approved)"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        body {\n            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\n            background-color: #f0f2f5;\n            margin: 0;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n        }\n        .card {\n            background: #ffffff;\n            padding: 50px;\n            border-radius: 12px;\n            box-shadow: 0 10px 25px rgba(0,0,0,0.05);\n            text-align: center;\n            max-width: 450px;\n            border-top: 6px solid #d93025; /* Professional Red for Decline */\n        }\n        .icon-circle {\n            width: 80px;\n            height: 80px;\n            background: #fce8e6;\n            color: #d93025;\n            border-radius: 50%;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            font-size: 40px;\n            margin: 0 auto 20px;\n        }\n        h1 {\n            color: #202124;\n            font-size: 24px;\n            margin-bottom: 10px;\n        }\n        p {\n            color: #5f6368;\n            font-size: 16px;\n            line-height: 1.5;\n            margin-bottom: 25px;\n        }\n        .footer {\n            font-size: 12px;\n            color: #9aa0a6;\n            margin-top: 30px;\n            padding-top: 20px;\n            border-top: 1px solid #f1f3f4;\n        }\n        .asu-tag {\n            font-weight: bold;\n            color: #d93025;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"card\">\n        <div class=\"icon-circle\">✕</div>\n        <h1>Request Declined</h1>\n        <p>The request has been declined. No further action will be taken, and the system has updated the status accordingly.</p>\n        \n        <div class=\"footer\">\n            <span class=\"asu-tag\">Applied Science Private University</span><br>\n            Faculty of Information Technology<br>\n            AI Automation Systems ©️ 2026\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        656,
+        704
+      ],
+      "id": "69944212-aeb4-4d20-a037-546d7921e609",
+      "name": "Respond to Webhook(Declined)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI(\"drEmail\") }}",
+        "subject": "Approvale Meeting",
+        "message": "=<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 20px auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);\">\n  \n  <div style=\"background-color: #0056b3; color: #ffffff; padding: 25px; text-align: center;\">\n    <h2 style=\"margin: 0; font-size: 20px; letter-spacing: 1px;\">New Appointment Request 🗓️</h2>\n  </div>\n\n  <div style=\"padding: 30px; color: #333; line-height: 1.6;\">\n    <p style=\"font-size: 16px;\">Dear <strong>Dr. {{$fromAI(\"drName\")}}</strong>,</p>\n    <p style=\"font-size: 15px; color: #555;\">You have received a new booking request from the Faculty of IT. Below are the full details:</p>\n    \n    <div style=\"background-color: #f8f9fa; border: 1px solid #eee; border-left: 5px solid #0056b3; padding: 20px; margin: 20px 0; border-radius: 4px;\">\n      <h3 style=\"margin-top: 0; color: #0056b3; font-size: 16px;\">👤 Student Information</h3>\n      <p style=\"margin: 5px 0;\"><strong>Name:</strong> {{$fromAI(\"studentName\")}}</p>\n      <p style=\"margin: 5px 0;\"><strong>ID:</strong> {{$fromAI(\"studentId\")}}</p>\n      <p style=\"margin: 5px 0;\"><strong>Email:</strong> {{$fromAI(\"studentEmail\")}}</p>\n      <p style=\"margin: 5px 0;\"><strong>Major:</strong> {{$fromAI(\"studentMajor\")}}</p>\n    </div>\n\n    <div style=\"background-color: #fff9f0; border: 1px solid #ffeeba; border-left: 5px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 4px;\">\n      <h3 style=\"margin-top: 0; color: #856404; font-size: 16px;\">📅 Appointment Details</h3>\n      <p style=\"margin: 5px 0;\"><strong>Date:</strong> {{$fromAI(\"date\")}} ({{$fromAI(\"appointmentDay\")}})</p>\n      <p style=\"margin: 5px 0;\"><strong>Time:</strong> {{$fromAI(\"startTime\")}} - {{$fromAI(\"endTime\")}}</p>\n      <p style=\"margin: 5px 0;\"><strong>Reason:</strong> {{$fromAI(\"visitReason\")}}</p>\n    </div>\n\n    <p style=\"font-size: 14px; color: #666; margin-bottom: 30px;\">Please select an action to respond:</p>\n\n    <div style=\"text-align: center;\">\n      \n      <a href=\"REPLACED_WITH_YOUR_WEBHOOK_URL?action=approve&drEmail={{$fromAI('drEmail')}}&stEmail={{$fromAI('studentEmail')}}&stName={{$fromAI('studentName')}}&drName={{$fromAI('drName')}}&date={{$fromAI('date')}}&start={{$fromAI('startTime')}}&end={{$fromAI('endTime')}}&reason={{$fromAI('visitReason')}}&stId={{$fromAI('studentId')}}\" \n         style=\"background-color: #28a745; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; margin: 0 10px 10px 0;\">\n         Accept ✅\n      </a>\n\n      <a href=\"REPLACED_WITH_YOUR_WEBHOOK_URL?action=decline&drEmail={{$fromAI('drEmail')}}&stEmail={{$fromAI('studentEmail')}}&stName={{$fromAI('studentName')}}&drName={{$fromAI('drName')}}\" \n         style=\"background-color: #dc3545; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;\">\n         Decline ❌\n      </a>\n\n    </div>\n  </div>\n\n  <div style=\"background-color: #f8f9fa; color: #999; padding: 15px; text-align: center; font-size: 11px; border-top: 1px solid #eee;\">\n    ASU - Faculty of IT | Office Hours Booking System\n  </div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        240
+      ],
+      "id": "00bed4ba-da1f-409f-b219-5c01fca15076",
+      "name": "Gmail",
+      "webhookId": "5c9d4524-4507-473a-8ea6-1285ae1e2d36",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ZTXDBwaVklo4gcc2",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet 2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet 1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check the Meeting": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Meeting Calender for Doctor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Excues for Meeting Decline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting Calender for Doctor": {
+      "main": [
+        [
+          {
+            "node": "Meeting Calender for Student",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting Calender for Student": {
+      "main": [
+        [
+          {
+            "node": "Meeting Approved for Student",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meeting Approved for Student": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook (Approved)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Excues for Meeting Decline": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook(Declined)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "safe-version-001",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
