@@ -16,6 +16,10 @@ Welcome to my automation portfolio! This repository contains professional workfl
 - **Goal:** Automate academic office hour scheduling using AI to handle requests and conflict checks.
 - **Tools:** n8n, AI Agents (GPT-4o-mini), Google Calendar, Google Sheets, Gmail.
 
+### 4. [HR CV Screening & Scoring System](./HR_System)
+- **Goal:** Automate candidate CV screening and provide objective evaluation scores based on job requirements.
+- **Tools:** n8n, AI Agents (GPT-4o), Google Sheets/Excel. 
+
 ---
 ## 📩 Contact Me
 
