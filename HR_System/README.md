@@ -1,5 +1,8 @@
 # 🤖 AI-Powered HR CV Screening System
 
+<img width="1481" height="605" alt="image" src="https://github.com/user-attachments/assets/5d84fb7f-f4b1-429c-9dd9-ba0921dcc76d" />
+
+
 ### 🎯 Purpose
 An intelligent automation pipeline that eliminates manual recruitment bottlenecks by autonomously screening, scoring, and organizing candidate resumes.
 
